@@ -1,0 +1,23 @@
+# mkinitcpio preset for the Qinux kernel.
+#
+# Installed to /etc/mkinitcpio.d/. Referenced by the kernel package's install
+# hook, which runs mkinitcpio -P qinux.
+#
+# The image name deliberately carries the kernel version, so a user with a
+# previous kernel installed still has its initramfs after an update. This is the
+# single most common cause of an unbootable system after a kernel upgrade.
+
+ALL_kver='/boot/vmlinuz-linux-qinux'
+
+default_image="/boot/initramfs-linux-qinux.img"
+
+# Modules loaded before the image is assembled. kms must come early so the
+# splash screen has something to draw on.
+microcode_hook='/usr/lib/initcpio/install/hooks/microcode'
+kms_hook='/usr/lib/initcpio/install/hooks/kms'
+
+# Regenerate for every kernel flavour the distribution builds. Without this a
+# kernel built with a different name never gets an initramfs and fails to boot
+# with a missing-initramfs error.
+ALL_microcode=('/boot/intel-ucode.img' '/boot/amd-ucode.img')
+ALL_kms=('/usr/lib/modules/*/kernel/drivers/gpu/drm/*_kms.ko.zst')
